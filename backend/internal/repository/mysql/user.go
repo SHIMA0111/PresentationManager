@@ -139,8 +139,14 @@ func (r *mysqlUserRepository) GetUsers(ctx context.Context) ([]*domain.User, err
 // UpdateUser updates an existing user's details in the database using the provided user entity.
 // Returns an error if the update operation fails.
 func (r *mysqlUserRepository) UpdateUser(ctx context.Context, user *domain.User) error {
+	if err := uuid.Validate(user.Id); err != nil {
+		return fmt.Errorf("invalid uuid inputted: %w", err)
+	}
+
 	query := "UPDATE users SET name = ?, email = ?, role = ? WHERE id = ? AND deleted_at IS NULL"
+
 	_, err := r.db.ExecContext(ctx, query, user.Name, user.Email, user.Role, user.Id)
+	
 	if err != nil {
 		return fmt.Errorf("failed to update user: %w", err)
 	}
@@ -150,6 +156,10 @@ func (r *mysqlUserRepository) UpdateUser(ctx context.Context, user *domain.User)
 
 // DeleteUser marks a user as deleted by setting the deleted_at timestamp in the database.
 func (r *mysqlUserRepository) DeleteUser(ctx context.Context, id string) error {
+	if err := uuid.Validate(id); err != nil {
+		return fmt.Errorf("invalid uuid inputted: %w", err)
+	}
+
 	query := "UPDATE users SET deleted_at = NOW() WHERE id = ? AND deleted_at IS NULL"
 	_, err := r.db.ExecContext(ctx, query, id)
 	if err != nil {
@@ -162,6 +172,10 @@ func (r *mysqlUserRepository) DeleteUser(ctx context.Context, id string) error {
 // HardDeleteUser permanently removes a user record from the database by their ID.
 // Returns an error if the deletion fails.
 func (r *mysqlUserRepository) HardDeleteUser(ctx context.Context, id string) error {
+	if err := uuid.Validate(id); err != nil {
+		return fmt.Errorf("invalid uuid inputted: %w", err)
+	}
+
 	query := "DELETE FROM users WHERE id = ?"
 	_, err := r.db.ExecContext(ctx, query, id)
 	if err != nil {

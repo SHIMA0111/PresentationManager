@@ -1,6 +1,6 @@
 -- PresentationManager データベース初期化スクリプト
 
--- データベースの作成
+-- データベースの作成（文字エンコーディングを明示的に設定）
 CREATE DATABASE IF NOT EXISTS presentation_manager;
 USE presentation_manager;
 
@@ -9,9 +9,10 @@ CREATE TABLE IF NOT EXISTS users (
     id varchar(255) PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
-    role ENUM('admin', 'user') DEFAULT 'user',
+    role int DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP DEFAULT NULL
 );
 
 -- チームテーブル
@@ -20,7 +21,8 @@ CREATE TABLE IF NOT EXISTS teams (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP DEFAULT NULL
 );
 
 -- プレゼンテーションテーブル
@@ -34,6 +36,7 @@ CREATE TABLE IF NOT EXISTS presentations (
     status ENUM('draft', 'unassigned', 'assigned', 'content_inputted', 'completed') DEFAULT 'draft',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP DEFAULT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE
 );
@@ -43,7 +46,7 @@ CREATE TABLE IF NOT EXISTS team_members (
     id varchar(255) PRIMARY KEY,
     team_id varchar(255) NOT NULL,
     user_id varchar(255) NOT NULL,
-    role ENUM('team_manager', 'member') DEFAULT 'member',
+    role int DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -52,15 +55,15 @@ CREATE TABLE IF NOT EXISTS team_members (
 
 -- サンプルデータの挿入
 INSERT INTO users (id, email, name, role) VALUES
-('cd626be2-298f-d753-d269-4708d5ae7e10', 'admin@example.com', '管理者', 'admin'),
-('123e4567-e89b-12d3-a456-426614174000', 'user1@example.com', 'ユーザー1', 'user'),
-('123e4567-e89b-12d3-a456-426614174001', 'user2@example.com', 'ユーザー2', 'user'),
-('123e4567-e89b-12d3-a456-426614174002', 'user3@example.com', 'ユーザー3', 'user'),
-('123e4567-e89b-12d3-a456-426614174003', 'user4@example.com', 'ユーザー4', 'user'),
-('123e4567-e89b-12d3-a456-426614174004', 'user5@example.com', 'ユーザー5', 'user'),
-('123e4567-e89b-12d3-a456-426614174005', 'user6@example.com', 'ユーザー6', 'user'),
-('123e4567-e89b-12d3-a456-426614174006', 'user7@example.com', 'ユーザー7', 'user'),
-('123e4567-e89b-12d3-a456-426614174007', 'user8@example.com', 'ユーザー8', 'user')
+('cd626be2-298f-d753-d269-4708d5ae7e10', 'admin@example.com', '管理者', 1),
+('123e4567-e89b-12d3-a456-426614174000', 'user1@example.com', 'ユーザー1', 0),
+('123e4567-e89b-12d3-a456-426614174001', 'user2@example.com', 'ユーザー2', 0),
+('123e4567-e89b-12d3-a456-426614174002', 'user3@example.com', 'ユーザー3', 0),
+('123e4567-e89b-12d3-a456-426614174003', 'user4@example.com', 'ユーザー4', 0),
+('123e4567-e89b-12d3-a456-426614174004', 'user5@example.com', 'ユーザー5', 0),
+('123e4567-e89b-12d3-a456-426614174005', 'user6@example.com', 'ユーザー6', 0),
+('123e4567-e89b-12d3-a456-426614174006', 'user7@example.com', 'ユーザー7', 0),
+('123e4567-e89b-12d3-a456-426614174007', 'user8@example.com', 'ユーザー8', 0)
 ON DUPLICATE KEY UPDATE name = VALUES(name);
 
 INSERT INTO teams (id, name, description) VALUES
@@ -70,14 +73,14 @@ INSERT INTO teams (id, name, description) VALUES
 ON DUPLICATE KEY UPDATE description = VALUES(description);
 
 INSERT INTO team_members (id, team_id, user_id, role) VALUES
-('123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174000', 'team_manager'),
-('123e4567-e89b-12d3-a456-426614174001', '123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001', 'member'),
-('123e4567-e89b-12d3-a456-426614174002', '123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174002', 'member'),
-('123e4567-e89b-12d3-a456-426614174003', '123e4567-e89b-12d3-a456-426614174001', '123e4567-e89b-12d3-a456-426614174003', 'team_manager'),
-('123e4567-e89b-12d3-a456-426614174004', '123e4567-e89b-12d3-a456-426614174001', '123e4567-e89b-12d3-a456-426614174004', 'member'),
-('123e4567-e89b-12d3-a456-426614174005', '123e4567-e89b-12d3-a456-426614174001', '123e4567-e89b-12d3-a456-426614174005', 'member'),
-('123e4567-e89b-12d3-a456-426614174006', '123e4567-e89b-12d3-a456-426614174002', '123e4567-e89b-12d3-a456-426614174006', 'team_manager'),
-('123e4567-e89b-12d3-a456-426614174007', '123e4567-e89b-12d3-a456-426614174002', '123e4567-e89b-12d3-a456-426614174007', 'member')
+('123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174000', 1),
+('123e4567-e89b-12d3-a456-426614174001', '123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001', 0),
+('123e4567-e89b-12d3-a456-426614174002', '123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174002', 0),
+('123e4567-e89b-12d3-a456-426614174003', '123e4567-e89b-12d3-a456-426614174001', '123e4567-e89b-12d3-a456-426614174003', 1),
+('123e4567-e89b-12d3-a456-426614174004', '123e4567-e89b-12d3-a456-426614174001', '123e4567-e89b-12d3-a456-426614174004', 0),
+('123e4567-e89b-12d3-a456-426614174005', '123e4567-e89b-12d3-a456-426614174001', '123e4567-e89b-12d3-a456-426614174005', 0),
+('123e4567-e89b-12d3-a456-426614174006', '123e4567-e89b-12d3-a456-426614174002', '123e4567-e89b-12d3-a456-426614174006', 1),
+('123e4567-e89b-12d3-a456-426614174007', '123e4567-e89b-12d3-a456-426614174002', '123e4567-e89b-12d3-a456-426614174007', 0)
 ON DUPLICATE KEY UPDATE role = VALUES(role);
 
 -- インデックスの作成

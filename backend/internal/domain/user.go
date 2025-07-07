@@ -3,8 +3,8 @@ package domain
 type RoleEnum int
 
 const (
-	AdminRole RoleEnum = iota
-	UserRole
+	UserRole RoleEnum = iota
+	AdminRole
 )
 
 func (r RoleEnum) String() string {
@@ -25,8 +25,15 @@ type User struct {
 	Role  RoleEnum `json:"role"`
 }
 
-type UserCreate struct {
-	Name  string   `json:"name"`
-	Email string   `json:"email"`
-	Role  RoleEnum `json:"role"`
+type UserCreateRequest struct {
+	Name  string   `json:"name" binding:"required"`
+	Email string   `json:"email" binding:"required, email"`
+	Role  RoleEnum `json:"role" binding:"required"`
+}
+
+type UserUpdateRequest struct {
+	Id    string   `json:"id" binding:"required, uuid"`
+	Name  string   `json:"name" binding:"required"`
+	Email string   `json:"email" binding:"required, email"`
+	Role  RoleEnum `json:"role" binding:"required"`
 }

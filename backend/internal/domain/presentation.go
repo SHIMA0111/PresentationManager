@@ -37,23 +37,23 @@ type Presentation struct {
 	Status           StatusEnum `json:"status"`
 }
 
-type PresentationCreate struct {
-	PresentationDate string `json:"presentation_date"`
-	Team             string `json:"team"`
+type PresentationCreateRequest struct {
+	PresentationDate string `json:"presentation_date" binding:"required"`
+	Team             string `json:"team" binding:"required"`
 }
 
-type PresentationUpdateTeam struct {
-	Id   string `json:"id"`
-	Team string `json:"team"`
+type PresentationUpdateTeamRequest struct {
+	Id   string `json:"id" binding:"required"`
+	Team string `json:"team" binding:"required"`
 }
 
-type PresentationUpdateAssignee struct {
-	Id       string `json:"id"`
-	Assignee string `json:"assignee"`
+type PresentationUpdateAssigneeRequest struct {
+	Id       string `json:"id" binding:"required"`
+	Assignee string `json:"assignee" binding:"required"`
 }
 
-type PresentationUpdateContents struct {
-	Id          string `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
+type PresentationUpdateContentsRequest struct {
+	Id          string `json:"id" binding:"required"`
+	Title       string `json:"title" binding:"required"`
+	Description string `json:"description" binding:"omitempty"`
 }

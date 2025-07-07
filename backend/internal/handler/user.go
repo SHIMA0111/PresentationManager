@@ -72,6 +72,7 @@ func (h *UserHandler) GetUsersByTeam(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, gin.H{"error": "failed to get users by team"})
 		slog.Error("failed to get users by team", "error", err)
+		return
 	}
 
 	c.JSON(200, users)
@@ -83,6 +84,7 @@ func (h *UserHandler) GetAllUsers(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, gin.H{"error": "failed to get users"})
 		slog.Error("failed to get users", "error", err)
+		return
 	}
 
 	c.JSON(200, users)
@@ -100,6 +102,7 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 	if _, err := h.service.UpdateUser(ctx, req); err != nil {
 		c.JSON(500, gin.H{"error": "failed to update user"})
 		slog.Error("failed to update user", "error", err)
+		return
 	}
 
 	c.JSON(200, nil)
@@ -120,6 +123,7 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 	if err := h.service.DeleteUser(ctx, uri.Id); err != nil {
 		c.JSON(500, gin.H{"error": "failed to delete user"})
 		slog.Error("failed to delete user", "error", err)
+		return
 	}
 
 	c.JSON(204, nil)
@@ -139,6 +143,7 @@ func (h *UserHandler) HardDeleteUser(c *gin.Context) {
 	if err := h.service.HardDeleteUser(ctx, uri.Id); err != nil {
 		c.JSON(500, gin.H{"error": "failed to hard delete user"})
 		slog.Error("failed to hard delete user", "error", err)
+		return
 	}
 
 	c.JSON(204, nil)

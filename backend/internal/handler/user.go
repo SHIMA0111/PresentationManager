@@ -20,7 +20,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(400, gin.H{"error": "invalid request body"})
-		slog.Error("failed to bind json: %w", err)
+		slog.Error("failed to bind json", "error", err)
 		return
 	}
 
@@ -28,7 +28,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	user, err := h.service.CreateUser(ctx, req)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "failed to create user"})
-		slog.Error("failed to create user: %w", err)
+		slog.Error("failed to create user", "error", err)
 		return
 	}
 	c.JSON(201, user)
@@ -41,7 +41,7 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 
 	if err := c.ShouldBindUri(&uri); err != nil {
 		c.JSON(400, gin.H{"error": "invalid request body"})
-		slog.Error("failed to bind uri: %w", err)
+		slog.Error("failed to bind uri", "error", err)
 		return
 	}
 
@@ -49,7 +49,7 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 	user, err := h.service.GetUser(ctx, uri.Id)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "failed to get user"})
-		slog.Error("failed to get user: %w", err)
+		slog.Error("failed to get user", "error", err)
 		return
 	}
 
@@ -63,7 +63,7 @@ func (h *UserHandler) GetUsersByTeam(c *gin.Context) {
 
 	if err := c.ShouldBindUri(&uri); err != nil {
 		c.JSON(400, gin.H{"error": "invalid request body"})
-		slog.Error("failed to bind uri: %w", err)
+		slog.Error("failed to bind uri", "error", err)
 		return
 	}
 
@@ -71,7 +71,7 @@ func (h *UserHandler) GetUsersByTeam(c *gin.Context) {
 	users, err := h.service.GetUsersByTeam(ctx, uri.TeamId)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "failed to get users by team"})
-		slog.Error("failed to get users by team: %w", err)
+		slog.Error("failed to get users by team", "error", err)
 	}
 
 	c.JSON(200, users)
@@ -82,7 +82,7 @@ func (h *UserHandler) GetAllUsers(c *gin.Context) {
 	users, err := h.service.GetAllUsers(ctx)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "failed to get users"})
-		slog.Error("failed to get users: %w", err)
+		slog.Error("failed to get users", "error", err)
 	}
 
 	c.JSON(200, users)
@@ -92,9 +92,17 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 	var req domain.UserUpdateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(400, gin.H{"error": "invalid request body"})
-		slog.Error("failed to bind json: %w", err)
+		slog.Error("failed to bind json", "error", err)
 		return
 	}
+
+	ctx := c.Request.Context()
+	if _, err := h.service.UpdateUser(ctx, req); err != nil {
+		c.JSON(500, gin.H{"error": "failed to update user"})
+		slog.Error("failed to update user", "error", err)
+	}
+
+	c.JSON(200, nil)
 }
 
 func (h *UserHandler) DeleteUser(c *gin.Context) {
@@ -104,14 +112,14 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 
 	if err := c.ShouldBindUri(&uri); err != nil {
 		c.JSON(400, gin.H{"error": "invalid request body"})
-		slog.Error("failed to bind uri: %w", err)
+		slog.Error("failed to bind uri", "error", err)
 		return
 	}
 
 	ctx := c.Request.Context()
 	if err := h.service.DeleteUser(ctx, uri.Id); err != nil {
 		c.JSON(500, gin.H{"error": "failed to delete user"})
-		slog.Error("failed to delete user: %w", err)
+		slog.Error("failed to delete user", "error", err)
 	}
 
 	c.JSON(204, nil)
@@ -123,14 +131,14 @@ func (h *UserHandler) HardDeleteUser(c *gin.Context) {
 	}
 	if err := c.ShouldBindUri(&uri); err != nil {
 		c.JSON(400, gin.H{"error": "invalid request body"})
-		slog.Error("failed to bind uri: %w", err)
+		slog.Error("failed to bind uri", "error", err)
 		return
 	}
 
 	ctx := c.Request.Context()
 	if err := h.service.HardDeleteUser(ctx, uri.Id); err != nil {
 		c.JSON(500, gin.H{"error": "failed to hard delete user"})
-		slog.Error("failed to hard delete user: %w", err)
+		slog.Error("failed to hard delete user", "error", err)
 	}
 
 	c.JSON(204, nil)

@@ -42,7 +42,7 @@ func (r *mysqlUserRepository) GetUser(ctx context.Context, id string) (*domain.U
 		return nil, fmt.Errorf("invalid uuid inputted: %w", err)
 	}
 
-	query := "SELECT name, email, role FROM users WHERE id = ?"
+	query := "SELECT name, email, role FROM users WHERE id = ? AND deleted_at IS NULL"
 
 	var name string
 	var email string
@@ -69,7 +69,11 @@ func (r *mysqlUserRepository) GetTeamUsers(ctx context.Context, teamId string) (
 		return nil, fmt.Errorf("invalid uuid inputted: %w", err)
 	}
 
-	query := "SELECT u.id, u.name, u.email, u.role FROM users u INNER JOIN teams t ON u.id = t.user_id WHERE t.id = ?"
+	query := `
+		SELECT u.id, u.name, u.email, u.role 
+		FROM users u 
+		INNER JOIN team_members tm ON u.id = tm.user_id 
+		WHERE tm.team_id = ? AND u.deleted_at IS NULL`
 
 	rows, err := r.db.QueryContext(ctx, query, teamId)
 	if err != nil {
@@ -102,7 +106,7 @@ func (r *mysqlUserRepository) GetTeamUsers(ctx context.Context, teamId string) (
 // GetUsers retrieves a list of all users from the database.
 // Returns a slice of User objects or an error if retrieval fails.
 func (r *mysqlUserRepository) GetUsers(ctx context.Context) ([]*domain.User, error) {
-	query := "SELECT id, name, email, role FROM users"
+	query := "SELECT id, name, email, role FROM users WHERE deleted_at IS NULL"
 
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
@@ -135,7 +139,7 @@ func (r *mysqlUserRepository) GetUsers(ctx context.Context) ([]*domain.User, err
 // UpdateUser updates an existing user's details in the database using the provided user entity.
 // Returns an error if the update operation fails.
 func (r *mysqlUserRepository) UpdateUser(ctx context.Context, user *domain.User) error {
-	query := "UPDATE users SET name = ?, email = ?, role = ? WHERE id = ?"
+	query := "UPDATE users SET name = ?, email = ?, role = ? WHERE id = ? AND deleted_at IS NULL"
 	_, err := r.db.ExecContext(ctx, query, user.Name, user.Email, user.Role, user.Id)
 	if err != nil {
 		return fmt.Errorf("failed to update user: %w", err)
@@ -146,7 +150,7 @@ func (r *mysqlUserRepository) UpdateUser(ctx context.Context, user *domain.User)
 
 // DeleteUser marks a user as deleted by setting the deleted_at timestamp in the database.
 func (r *mysqlUserRepository) DeleteUser(ctx context.Context, id string) error {
-	query := "UPDATE users SET deleted_at = NOW() WHERE id = ?"
+	query := "UPDATE users SET deleted_at = NOW() WHERE id = ? AND deleted_at IS NULL"
 	_, err := r.db.ExecContext(ctx, query, id)
 	if err != nil {
 		return fmt.Errorf("failed to delete user: %w", err)

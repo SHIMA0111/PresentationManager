@@ -16,7 +16,7 @@ type UserRepository interface {
 }
 
 type TeamRepository interface {
-	CreateTeam(ctx context.Context, team *domain.Team)
+	CreateTeam(ctx context.Context, team *domain.Team) error
 	GetTeam(ctx context.Context, id string) (*domain.Team, error)
 	GetTeams(ctx context.Context) ([]*domain.Team, error)
 	UpdateTeam(ctx context.Context, team *domain.Team) error

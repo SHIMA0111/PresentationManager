@@ -28,7 +28,7 @@ func main() {
 
 	db, err := infra.SetupDatabase()
 	if err != nil {
-		log.Fatal("failed to setup database: ", err)
+		log.Fatalf("failed to setup database: %v", err)
 	}
 	defer db.Close()
 
@@ -39,6 +39,6 @@ func main() {
 
 	log.Println("server is running on port 8080")
 	if err = r.Run(":8080"); err != nil {
-		log.Fatal("failed to run server: ", err)
+		log.Fatalf("failed to run server: %v", err)
 	}
 }

@@ -1,6 +1,6 @@
 -- PresentationManager データベース初期化スクリプト
 
--- データベースの作成（文字エンコーディングを明示的に設定）
+-- データベースの作成
 CREATE DATABASE IF NOT EXISTS presentation_manager;
 USE presentation_manager;
 

@@ -22,6 +22,22 @@ func setupUserRoutes(api *gin.RouterGroup, handler *handler.UserHandler) {
 	}
 }
 
+func setupPresentationRoutes(api *gin.RouterGroup, handler *handler.PresentationHandler) {
+	presentations := api.Group("/presentations")
+	{
+		presentations.POST("", handler.CreatePresentation)
+		presentations.GET("", handler.GetPresentations)
+		presentations.GET("/teams/:teamId", handler.GetTeamPresentations)
+		presentations.GET("/users/:userId", handler.GetUserPresentations)
+		presentations.PUT("/team", handler.UpdatePresentationTeam)
+		presentations.PUT("/assignee", handler.UpdatePresentationAssign)
+		presentations.PUT("/contents", handler.UpdatePresentationContent)
+		presentations.PUT("", handler.UpdatePresentation)
+		presentations.DELETE("/:id", handler.DeletePresentation)
+		presentations.DELETE("/hard/:id", handler.HardDeletePresentation)
+	}
+}
+
 func main() {
 	r := gin.Default()
 	apiRoot := r.Group("/api/v1")
@@ -36,6 +52,11 @@ func main() {
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
 	setupUserRoutes(apiRoot, userHandler)
+
+	presentationRepo := mysql.NewPresentationRepository(db)
+	presentationService := service.NewPresentationService(presentationRepo)
+	presentationHandler := handler.NewPresentationHandler(presentationService)
+	setupPresentationRoutes(apiRoot, presentationHandler)
 
 	log.Println("server is running on port 8080")
 	if err = r.Run(":8080"); err != nil {

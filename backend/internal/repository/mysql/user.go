@@ -6,7 +6,6 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
-	"log"
 
 	"github.com/SHIMA0111/PresentationManager/backend/internal/domain"
 	"github.com/SHIMA0111/PresentationManager/backend/internal/repository"
@@ -16,9 +15,7 @@ type mysqlUserRepository struct {
 	db *sql.DB
 }
 
-// NewUserRepository initializes a new UserRepository by establishing a connection to the MySQL database.
-// It retrieves connection parameters from environment variables and validates the connection.
-// Returns a pointer to a UserRepository instance and an error if the connection fails.
+// NewUserRepository initializes and returns a new instance of UserRepository with the provided database connection.
 func NewUserRepository(db *sql.DB) repository.UserRepository {
 	return &mysqlUserRepository{db: db}
 }
@@ -42,24 +39,15 @@ func (r *mysqlUserRepository) GetUser(ctx context.Context, id string) (*domain.U
 		return nil, fmt.Errorf("invalid uuid inputted: %w", err)
 	}
 
-	query := "SELECT name, email, role FROM users WHERE id = ? AND deleted_at IS NULL"
+	query := "SELECT id, name, email, role FROM users WHERE id = ? AND deleted_at IS NULL"
 
-	var name string
-	var email string
-	var role domain.RoleEnum
+	var user domain.User
 
-	if err := r.db.QueryRowContext(ctx, query, id).Scan(&name, &email, &role); err != nil {
+	if err := r.db.QueryRowContext(ctx, query, id).Scan(&user.Id, &user.Name, &user.Email, &user.Role); err != nil {
 		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 
-	log.Printf("name: %s, email: %s, role: %s", name, email, role)
-
-	return &domain.User{
-		Id:    id,
-		Name:  name,
-		Email: email,
-		Role:  role,
-	}, nil
+	return &user, nil
 }
 
 // GetTeamUsers retrieves a list of users associated with a specific team using the team ID.
@@ -83,21 +71,13 @@ func (r *mysqlUserRepository) GetTeamUsers(ctx context.Context, teamId string) (
 
 	var users []*domain.User
 	for rows.Next() {
-		var id string
-		var name string
-		var email string
-		var role domain.RoleEnum
+		var user domain.User
 
-		if err := rows.Scan(&id, &name, &email, &role); err != nil {
+		if err = rows.Scan(&user.Id, &user.Name, &user.Email, &user.Role); err != nil {
 			return nil, fmt.Errorf("failed to scan user: %w", err)
 		}
 
-		users = append(users, &domain.User{
-			Id:    id,
-			Name:  name,
-			Email: email,
-			Role:  role,
-		})
+		users = append(users, &user)
 	}
 
 	return users, nil
@@ -146,7 +126,7 @@ func (r *mysqlUserRepository) UpdateUser(ctx context.Context, user *domain.User)
 	query := "UPDATE users SET name = ?, email = ?, role = ? WHERE id = ? AND deleted_at IS NULL"
 
 	_, err := r.db.ExecContext(ctx, query, user.Name, user.Email, user.Role, user.Id)
-	
+
 	if err != nil {
 		return fmt.Errorf("failed to update user: %w", err)
 	}

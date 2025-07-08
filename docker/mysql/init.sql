@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS presentations (
     user_id varchar(255),
     title VARCHAR(255),
     description TEXT,
-    status ENUM('draft', 'unassigned', 'assigned', 'content_inputted', 'completed') DEFAULT 'draft',
+    status int DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL,
@@ -82,6 +82,17 @@ INSERT INTO team_members (id, team_id, user_id, role) VALUES
 ('123e4567-e89b-12d3-a456-426614174006', '123e4567-e89b-12d3-a456-426614174002', '123e4567-e89b-12d3-a456-426614174006', 1),
 ('123e4567-e89b-12d3-a456-426614174007', '123e4567-e89b-12d3-a456-426614174002', '123e4567-e89b-12d3-a456-426614174007', 0)
 ON DUPLICATE KEY UPDATE role = VALUES(role);
+
+INSERT INTO presentations (id, presentation_datetime, team_id, user_id, title, description, status) VALUES
+('123e4567-e89b-12d3-a456-426614174000', '2025-01-01 10:00:00', '123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174000', 'プレゼンテーション1', 'プレゼンテーション1の説明', 0),
+('123e4567-e89b-12d3-a456-426614174001', '2025-01-01 10:00:00', '123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001', 'プレゼンテーション2', 'プレゼンテーション2の説明', 0),
+('123e4567-e89b-12d3-a456-426614174002', '2025-01-01 10:00:00', '123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174002', 'プレゼンテーション3', 'プレゼンテーション3の説明', 0),
+('123e4567-e89b-12d3-a456-426614174003', '2025-01-01 10:00:00', '123e4567-e89b-12d3-a456-426614174001', '123e4567-e89b-12d3-a456-426614174003', 'プレゼンテーション4', 'プレゼンテーション4の説明', 0),
+('123e4567-e89b-12d3-a456-426614174004', '2025-01-01 10:00:00', '123e4567-e89b-12d3-a456-426614174001', '123e4567-e89b-12d3-a456-426614174004', 'プレゼンテーション5', 'プレゼンテーション5の説明', 0),
+('123e4567-e89b-12d3-a456-426614174005', '2025-01-01 10:00:00', '123e4567-e89b-12d3-a456-426614174002', '123e4567-e89b-12d3-a456-426614174005', 'プレゼンテーション6', 'プレゼンテーション6の説明', 0),
+('123e4567-e89b-12d3-a456-426614174006', '2025-01-01 10:00:00', '123e4567-e89b-12d3-a456-426614174002', '123e4567-e89b-12d3-a456-426614174006', 'プレゼンテーション7', 'プレゼンテーション7の説明', 0),
+('123e4567-e89b-12d3-a456-426614174007', '2025-01-01 10:00:00', '123e4567-e89b-12d3-a456-426614174002', '123e4567-e89b-12d3-a456-426614174007', 'プレゼンテーション8', 'プレゼンテーション8の説明', 0)
+ON DUPLICATE KEY UPDATE title = VALUES(title), description = VALUES(description), status = VALUES(status);
 
 -- インデックスの作成
 CREATE INDEX idx_presentations_user_id ON presentations(user_id);

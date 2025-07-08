@@ -36,7 +36,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 
 func (h *UserHandler) GetUser(c *gin.Context) {
 	var uri struct {
-		Id string `uri:"id" binding:"required"`
+		Id string `uri:"id" binding:"required,uuid"`
 	}
 
 	if err := c.ShouldBindUri(&uri); err != nil {
@@ -58,7 +58,7 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 
 func (h *UserHandler) GetUsersByTeam(c *gin.Context) {
 	var uri struct {
-		TeamId string `uri:"teamId" binding:"required"`
+		TeamId string `uri:"teamId" binding:"required,uuid"`
 	}
 
 	if err := c.ShouldBindUri(&uri); err != nil {
@@ -110,7 +110,7 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 
 func (h *UserHandler) DeleteUser(c *gin.Context) {
 	var uri struct {
-		Id string `uri:"id" binding:"required"`
+		Id string `uri:"id" binding:"required,uuid"`
 	}
 
 	if err := c.ShouldBindUri(&uri); err != nil {
@@ -131,7 +131,7 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 
 func (h *UserHandler) HardDeleteUser(c *gin.Context) {
 	var uri struct {
-		Id string `uri:"id" binding:"required"`
+		Id string `uri:"id" binding:"required,uuid"`
 	}
 	if err := c.ShouldBindUri(&uri); err != nil {
 		c.JSON(400, gin.H{"error": "invalid request body"})

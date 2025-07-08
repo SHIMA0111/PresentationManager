@@ -25,7 +25,8 @@ type TeamRepository interface {
 }
 
 type PresentationRepository interface {
-	CreatePresentation(ctx context.Context, presentation *domain.Presentation) (string, error)
+	CreatePresentation(ctx context.Context, presentation *domain.Presentation) error
+	GetPresentation(ctx context.Context, id string) (*domain.Presentation, error)
 	GetPresentations(ctx context.Context) ([]*domain.Presentation, error)
 	GetTeamPresentations(ctx context.Context, teamId string) ([]*domain.Presentation, error)
 	GetUserPresentations(ctx context.Context, userId string) ([]*domain.Presentation, error)

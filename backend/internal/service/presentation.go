@@ -63,16 +63,16 @@ func (s *presentationService) GetPresentationsByUser(ctx context.Context, userId
 func (s *presentationService) UpdatePresentation(ctx context.Context, presentationData domain.PresentationUpdateRequest) error {
 	isAllUpdate, newPresentation := presentationData.GetPresentationData()
 
-	originalPresentation, err := s.repo.GetPresentation(ctx, newPresentation.Id)
-	if err != nil {
-		return err
-	}
-
 	if isAllUpdate {
 		if newPresentation.Status == domain.Completed {
 			return fmt.Errorf("cannot update presentation status to completed")
 		}
 	} else {
+		originalPresentation, err := s.repo.GetPresentation(ctx, newPresentation.Id)
+		if err != nil {
+			return err
+		}
+
 		switch newPresentation.Status {
 		case domain.Unassigned:
 			newPresentation.Assignee = ""

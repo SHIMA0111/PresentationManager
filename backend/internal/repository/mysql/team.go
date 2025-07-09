@@ -4,22 +4,22 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/SHIMA0111/PresentationManager/backend/internal/repository"
 
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/SHIMA0111/PresentationManager/backend/internal/domain"
+	"github.com/SHIMA0111/PresentationManager/backend/internal/repository"
 )
 
-type teamRepository struct {
+type mysqlTeamRepository struct {
 	db *sql.DB
 }
 
 func NewTeamRepository(db *sql.DB) repository.TeamRepository {
-	return &teamRepository{db: db}
+	return &mysqlTeamRepository{db: db}
 }
 
-func (r *teamRepository) CreateTeam(ctx context.Context, team *domain.Team) error {
+func (r *mysqlTeamRepository) CreateTeam(ctx context.Context, team *domain.Team) error {
 	query := "INSERT INTO teams (id, name, description) VALUES (?, ?, ?)"
 	_, err := r.db.ExecContext(ctx, query, team.Id, team.Name, team.Description)
 	if err != nil {
@@ -29,7 +29,7 @@ func (r *teamRepository) CreateTeam(ctx context.Context, team *domain.Team) erro
 	return nil
 }
 
-func (r *teamRepository) AddTeamMember(ctx context.Context, teamMember *domain.TeamMember) error {
+func (r *mysqlTeamRepository) AddTeamMember(ctx context.Context, teamMember *domain.TeamMember) error {
 	query := "INSERT INTO team_members (team_id, user_id, Role) VALUES (?, ?, ?)"
 	_, err := r.db.ExecContext(ctx, query, teamMember.TeamId, teamMember.UserId, teamMember.Role)
 	if err != nil {
@@ -39,7 +39,7 @@ func (r *teamRepository) AddTeamMember(ctx context.Context, teamMember *domain.T
 	return nil
 }
 
-func (r *teamRepository) GetTeam(ctx context.Context, id string) (*domain.Team, error) {
+func (r *mysqlTeamRepository) GetTeam(ctx context.Context, id string) (*domain.Team, error) {
 	query := "SELECT id, name, description FROM teams WHERE id = ? AND deleted_at IS NULL"
 
 	var team domain.Team
@@ -50,7 +50,7 @@ func (r *teamRepository) GetTeam(ctx context.Context, id string) (*domain.Team, 
 	return &team, nil
 }
 
-func (r *teamRepository) GetTeams(ctx context.Context) ([]*domain.Team, error) {
+func (r *mysqlTeamRepository) GetTeams(ctx context.Context) ([]*domain.Team, error) {
 	query := "SELECT id, name, description FROM teams WHERE deleted_at IS NULL"
 
 	rows, err := r.db.QueryContext(ctx, query)
@@ -71,7 +71,7 @@ func (r *teamRepository) GetTeams(ctx context.Context) ([]*domain.Team, error) {
 	return teams, nil
 }
 
-func (r *teamRepository) UpdateTeam(ctx context.Context, team *domain.Team) error {
+func (r *mysqlTeamRepository) UpdateTeam(ctx context.Context, team *domain.Team) error {
 	query := "UPDATE teams SET name = ?, description = ? WHERE id = ? AND deleted_at IS NULL"
 
 	_, err := r.db.ExecContext(ctx, query, team.Name, team.Description, team.Id)
@@ -82,7 +82,7 @@ func (r *teamRepository) UpdateTeam(ctx context.Context, team *domain.Team) erro
 	return nil
 }
 
-func (r *teamRepository) RemoveTeamMember(ctx context.Context, teamMember *domain.TeamMember) error {
+func (r *mysqlTeamRepository) RemoveTeamMember(ctx context.Context, teamMember *domain.TeamMember) error {
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
@@ -102,7 +102,7 @@ func (r *teamRepository) RemoveTeamMember(ctx context.Context, teamMember *domai
 	return nil
 }
 
-func (r *teamRepository) DeleteTeam(ctx context.Context, id string) error {
+func (r *mysqlTeamRepository) DeleteTeam(ctx context.Context, id string) error {
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
@@ -131,7 +131,7 @@ func (r *teamRepository) DeleteTeam(ctx context.Context, id string) error {
 	return nil
 }
 
-func (r *teamRepository) HardDeleteTeam(ctx context.Context, id string) error {
+func (r *mysqlTeamRepository) HardDeleteTeam(ctx context.Context, id string) error {
 	query := "DELETE FROM team_members WHERE team_id = ?"
 
 	_, err := r.db.ExecContext(ctx, query, id)

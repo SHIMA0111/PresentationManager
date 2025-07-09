@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/SHIMA0111/PresentationManager/backend/internal/middleware/auth"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -56,6 +57,12 @@ func setupTeamRoutes(api *gin.RouterGroup, handler *handler.TeamHandler) {
 
 func main() {
 	r := gin.Default()
+
+	// Middlewares
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
+	r.Use(auth.JWTAuthMiddleware())
+
 	apiRoot := r.Group("/api/v1")
 
 	db, err := infra.SetupDatabase()

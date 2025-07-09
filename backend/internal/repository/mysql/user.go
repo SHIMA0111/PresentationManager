@@ -4,11 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/google/uuid"
-
 	"github.com/SHIMA0111/PresentationManager/backend/internal/domain"
 	"github.com/SHIMA0111/PresentationManager/backend/internal/repository"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type mysqlUserRepository struct {
@@ -35,10 +33,6 @@ func (r *mysqlUserRepository) CreateUser(ctx context.Context, user *domain.User)
 // GetUser retrieves a user by their unique ID from the database.
 // Returns a User object or an error if retrieval fails.
 func (r *mysqlUserRepository) GetUser(ctx context.Context, id string) (*domain.User, error) {
-	if err := uuid.Validate(id); err != nil {
-		return nil, fmt.Errorf("invalid uuid inputted: %w", err)
-	}
-
 	query := "SELECT id, name, email, role FROM users WHERE id = ? AND deleted_at IS NULL"
 
 	var user domain.User
@@ -53,10 +47,6 @@ func (r *mysqlUserRepository) GetUser(ctx context.Context, id string) (*domain.U
 // GetTeamUsers retrieves a list of users associated with a specific team using the team ID.
 // Returns users or an error.
 func (r *mysqlUserRepository) GetTeamUsers(ctx context.Context, teamId string) ([]*domain.User, error) {
-	if err := uuid.Validate(teamId); err != nil {
-		return nil, fmt.Errorf("invalid uuid inputted: %w", err)
-	}
-
 	query := `
 		SELECT u.id, u.name, u.email, u.role 
 		FROM users u 
@@ -119,10 +109,6 @@ func (r *mysqlUserRepository) GetUsers(ctx context.Context) ([]*domain.User, err
 // UpdateUser updates an existing user's details in the database using the provided user entity.
 // Returns an error if the update operation fails.
 func (r *mysqlUserRepository) UpdateUser(ctx context.Context, user *domain.User) error {
-	if err := uuid.Validate(user.Id); err != nil {
-		return fmt.Errorf("invalid uuid inputted: %w", err)
-	}
-
 	query := "UPDATE users SET name = ?, email = ?, role = ? WHERE id = ? AND deleted_at IS NULL"
 
 	_, err := r.db.ExecContext(ctx, query, user.Name, user.Email, user.Role, user.Id)
@@ -136,10 +122,6 @@ func (r *mysqlUserRepository) UpdateUser(ctx context.Context, user *domain.User)
 
 // DeleteUser marks a user as deleted by setting the deleted_at timestamp in the database.
 func (r *mysqlUserRepository) DeleteUser(ctx context.Context, id string) error {
-	if err := uuid.Validate(id); err != nil {
-		return fmt.Errorf("invalid uuid inputted: %w", err)
-	}
-
 	query := "UPDATE users SET deleted_at = NOW() WHERE id = ? AND deleted_at IS NULL"
 	_, err := r.db.ExecContext(ctx, query, id)
 	if err != nil {
@@ -152,10 +134,6 @@ func (r *mysqlUserRepository) DeleteUser(ctx context.Context, id string) error {
 // HardDeleteUser permanently removes a user record from the database by their ID.
 // Returns an error if the deletion fails.
 func (r *mysqlUserRepository) HardDeleteUser(ctx context.Context, id string) error {
-	if err := uuid.Validate(id); err != nil {
-		return fmt.Errorf("invalid uuid inputted: %w", err)
-	}
-
 	query := "DELETE FROM users WHERE id = ?"
 	_, err := r.db.ExecContext(ctx, query, id)
 	if err != nil {

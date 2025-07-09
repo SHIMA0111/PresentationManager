@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"log/slog"
+
+	"github.com/gin-gonic/gin"
+
 	"github.com/SHIMA0111/PresentationManager/backend/internal/domain"
 	"github.com/SHIMA0111/PresentationManager/backend/internal/service"
-	"github.com/gin-gonic/gin"
-	"log/slog"
 )
 
 type TeamHandler struct {

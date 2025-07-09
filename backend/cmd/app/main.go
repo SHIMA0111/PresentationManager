@@ -1,12 +1,14 @@
 package main
 
 import (
+	"log"
+
+	"github.com/gin-gonic/gin"
+
 	"github.com/SHIMA0111/PresentationManager/backend/internal/handler"
 	"github.com/SHIMA0111/PresentationManager/backend/internal/infra"
 	"github.com/SHIMA0111/PresentationManager/backend/internal/repository/mysql"
 	"github.com/SHIMA0111/PresentationManager/backend/internal/service"
-	"github.com/gin-gonic/gin"
-	"log"
 )
 
 func setupUserRoutes(api *gin.RouterGroup, handler *handler.UserHandler) {

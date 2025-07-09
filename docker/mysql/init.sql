@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS teams (
 CREATE TABLE IF NOT EXISTS presentations (
     id varchar(255) PRIMARY KEY,
     presentation_datetime DATETIME NOT NULL, 
-    team_id varchar(255) NOT NULL,
+    team_id varchar(255),
     user_id varchar(255),
     title VARCHAR(255),
     description TEXT,
@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS presentations (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE SET NULL
 );
 
 -- チームメンバーテーブル
@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS team_members (
     user_id varchar(255) NOT NULL,
     role int DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP DEFAULT NULL,
     PRIMARY KEY (team_id, user_id),
     FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE

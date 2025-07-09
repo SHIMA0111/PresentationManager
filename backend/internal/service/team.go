@@ -3,9 +3,11 @@ package service
 import (
 	"context"
 	"fmt"
+
+	"github.com/google/uuid"
+
 	"github.com/SHIMA0111/PresentationManager/backend/internal/domain"
 	"github.com/SHIMA0111/PresentationManager/backend/internal/repository"
-	"github.com/google/uuid"
 )
 
 type TeamService interface {

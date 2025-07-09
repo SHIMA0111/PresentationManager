@@ -4,9 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	_ "github.com/go-sql-driver/mysql"
+
 	"github.com/SHIMA0111/PresentationManager/backend/internal/domain"
 	"github.com/SHIMA0111/PresentationManager/backend/internal/repository"
-	_ "github.com/go-sql-driver/mysql"
 )
 
 type mysqlUserRepository struct {
@@ -122,10 +124,29 @@ func (r *mysqlUserRepository) UpdateUser(ctx context.Context, user *domain.User)
 
 // DeleteUser marks a user as deleted by setting the deleted_at timestamp in the database.
 func (r *mysqlUserRepository) DeleteUser(ctx context.Context, id string) error {
-	query := "UPDATE users SET deleted_at = NOW() WHERE id = ? AND deleted_at IS NULL"
-	_, err := r.db.ExecContext(ctx, query, id)
+	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	teamMemberDeleteQuery := "UPDATE team_members SET deleted_at = NOW() WHERE user_id = ? AND deleted_at IS NULL"
+	if _, err = tx.ExecContext(ctx, teamMemberDeleteQuery, id); err != nil {
 		return fmt.Errorf("failed to delete user: %w", err)
+	}
+
+	presentationUpdateUserQuery := "UPDATE presentations SET user_id = NULL WHERE user_id = ? AND status != 3 AND deleted_at IS NULL"
+	if _, err = tx.ExecContext(ctx, presentationUpdateUserQuery, id); err != nil {
+		return fmt.Errorf("failed to delete user: %w", err)
+	}
+
+	userSoftDeleteQuery := "UPDATE users SET deleted_at = NOW() WHERE user_id = ? AND deleted_at IS NULL"
+	if _, err = tx.ExecContext(ctx, userSoftDeleteQuery, id); err != nil {
+		return fmt.Errorf("failed to delete user: %w", err)
+	}
+
+	if err = tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
 	return nil

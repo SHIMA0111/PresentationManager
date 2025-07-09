@@ -20,9 +20,9 @@ func NewPresentationRepository(db *sql.DB) repository.PresentationRepository {
 }
 
 func (r *mysqlPresentationRepository) CreatePresentation(ctx context.Context, presentation *domain.Presentation) error {
-	query := "INSERT INTO presentations (id, title, description, team_id) VALUES (?, ?, ?, ?)"
+	query := "INSERT INTO presentations (id, presentation_datetime,title, description, team_id) VALUES (?, ?, ?, ?, ?)"
 
-	_, err := r.db.ExecContext(ctx, query, presentation.Id, presentation.Title, presentation.Description, presentation.Team)
+	_, err := r.db.ExecContext(ctx, query, presentation.Id, presentation.PresentationDate, presentation.Title, presentation.Description, presentation.Team)
 	if err != nil {
 		return fmt.Errorf("failed to insert user: %w", err)
 	}
@@ -31,10 +31,19 @@ func (r *mysqlPresentationRepository) CreatePresentation(ctx context.Context, pr
 }
 
 func (r *mysqlPresentationRepository) GetPresentation(ctx context.Context, id string) (*domain.Presentation, error) {
-	query := "SELECT id, title, description, team_id FROM presentations WHERE id = ? AND deleted_at IS NULL"
+	query := `
+		SELECT id, presentation_datetime, team_id, user_id, title, description, status
+		FROM presentations 
+		WHERE id = ? AND deleted_at IS NULL`
 	var presentation domain.Presentation
 	if err := r.db.QueryRowContext(ctx, query, id).Scan(
-		&presentation.Id, &presentation.Title, &presentation.Description, &presentation.Team); err != nil {
+		&presentation.Id,
+		&presentation.PresentationDate,
+		&presentation.Team,
+		&presentation.Assignee,
+		&presentation.Title,
+		&presentation.Description,
+		&presentation.Status); err != nil {
 
 		return nil, fmt.Errorf("failed to get presentation: %w", err)
 	}
@@ -42,7 +51,10 @@ func (r *mysqlPresentationRepository) GetPresentation(ctx context.Context, id st
 }
 
 func (r *mysqlPresentationRepository) GetPresentations(ctx context.Context) ([]*domain.Presentation, error) {
-	query := "SELECT id, title, description, team_id FROM presentations WHERE deleted_at IS NULL"
+	query := `
+		SELECT id, presentation_datetime, team_id, user_id, title, description, status
+		FROM presentations 
+		WHERE deleted_at IS NULL`
 
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
@@ -54,7 +66,15 @@ func (r *mysqlPresentationRepository) GetPresentations(ctx context.Context) ([]*
 	var presentations []*domain.Presentation
 	for rows.Next() {
 		var presentation domain.Presentation
-		if err := rows.Scan(&presentation.Id, &presentation.Title, &presentation.Description, &presentation.Team); err != nil {
+		if err := rows.Scan(
+			&presentation.Id,
+			&presentation.PresentationDate,
+			&presentation.Team,
+			&presentation.Assignee,
+			&presentation.Title,
+			&presentation.Description,
+			&presentation.Status); err != nil {
+
 			return nil, fmt.Errorf("failed to scan presentation: %w", err)
 		}
 		presentations = append(presentations, &presentation)
@@ -126,9 +146,22 @@ func (r *mysqlPresentationRepository) GetUserPresentations(ctx context.Context, 
 }
 
 func (r *mysqlPresentationRepository) UpdatePresentation(ctx context.Context, presentation *domain.Presentation) error {
-	query := "UPDATE presentations SET title = ?, description = ?, team_id = ? WHERE id = ? AND deleted_at IS NULL"
+	query := `
+		UPDATE presentations 
+		SET presentations.presentation_datetime = ?, team_id = ? , user_id = ?, title = ?, description = ?, status = ?
+		WHERE id = ? AND deleted_at IS NULL`
 
-	_, err := r.db.ExecContext(ctx, query, presentation.Title, presentation.Description, presentation.Team, presentation.Id)
+	_, err := r.db.ExecContext(
+		ctx,
+		query,
+		presentation.PresentationDate,
+		presentation.Team,
+		presentation.Assignee,
+		presentation.Title,
+		presentation.Description,
+		presentation.Status,
+		presentation.Id)
+	
 	if err != nil {
 		return fmt.Errorf("failed to update presentation: %w", err)
 	}

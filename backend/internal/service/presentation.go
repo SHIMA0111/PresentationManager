@@ -3,13 +3,15 @@ package service
 import (
 	"context"
 	"fmt"
+
+	"github.com/google/uuid"
+
 	"github.com/SHIMA0111/PresentationManager/backend/internal/domain"
 	"github.com/SHIMA0111/PresentationManager/backend/internal/repository"
-	"github.com/google/uuid"
 )
 
 type PresentationService interface {
-	CreatePresentation(ctx context.Context, presentationData domain.PresentationCreateRequest) (*domain.Presentation, error)
+	CreatePresentation(ctx context.Context, presentationData *domain.PresentationCreateRequest) (*domain.Presentation, error)
 	GetPresentations(ctx context.Context) ([]*domain.Presentation, error)
 	GetPresentationsByTeam(ctx context.Context, teamId string) ([]*domain.Presentation, error)
 	GetPresentationsByUser(ctx context.Context, userId string) ([]*domain.Presentation, error)
@@ -26,8 +28,8 @@ func NewPresentationService(repo repository.PresentationRepository) Presentation
 	return &presentationService{repo: repo}
 }
 
-func (s *presentationService) CreatePresentation(ctx context.Context, presentationData domain.PresentationCreateRequest) (*domain.Presentation, error) {
-	presentationUuid, err := uuid.NewRandom()
+func (s *presentationService) CreatePresentation(ctx context.Context, presentationData *domain.PresentationCreateRequest) (*domain.Presentation, error) {
+	presentationUuid, err := uuid.NewV7()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user id: %w", err)
 	}

@@ -25,7 +25,7 @@ func (h *PresentationHandler) CreatePresentation(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
-	presentation, err := h.service.CreatePresentation(ctx, req)
+	presentation, err := h.service.CreatePresentation(ctx, &req)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "failed to create presentation"})
 		slog.Error("failed to create presentation", "error", err)

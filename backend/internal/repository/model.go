@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/SHIMA0111/PresentationManager/backend/internal/domain"
 )
 
@@ -17,9 +18,11 @@ type UserRepository interface {
 
 type TeamRepository interface {
 	CreateTeam(ctx context.Context, team *domain.Team) error
+	AddTeamMember(ctx context.Context, teamMember *domain.TeamMember) error
 	GetTeam(ctx context.Context, id string) (*domain.Team, error)
 	GetTeams(ctx context.Context) ([]*domain.Team, error)
 	UpdateTeam(ctx context.Context, team *domain.Team) error
+	RemoveTeamMember(ctx context.Context, teamMember *domain.TeamMember) error
 	DeleteTeam(ctx context.Context, id string) error
 	HardDeleteTeam(ctx context.Context, id string) error
 }

@@ -25,7 +25,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
-	user, err := h.service.CreateUser(ctx, req)
+	user, err := h.service.CreateUser(ctx, &req)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "failed to create user"})
 		slog.Error("failed to create user", "error", err)
@@ -99,7 +99,7 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
-	if _, err := h.service.UpdateUser(ctx, req); err != nil {
+	if _, err := h.service.UpdateUser(ctx, &req); err != nil {
 		c.JSON(500, gin.H{"error": "failed to update user"})
 		slog.Error("failed to update user", "error", err)
 		return

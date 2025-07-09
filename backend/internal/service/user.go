@@ -9,11 +9,11 @@ import (
 )
 
 type UserService interface {
-	CreateUser(ctx context.Context, req domain.UserCreateRequest) (*domain.User, error)
+	CreateUser(ctx context.Context, req *domain.UserCreateRequest) (*domain.User, error)
 	GetUser(ctx context.Context, id string) (*domain.User, error)
 	GetUsersByTeam(ctx context.Context, teamId string) ([]*domain.User, error)
 	GetAllUsers(ctx context.Context) ([]*domain.User, error)
-	UpdateUser(ctx context.Context, req domain.UserUpdateRequest) (*domain.User, error)
+	UpdateUser(ctx context.Context, req *domain.UserUpdateRequest) (*domain.User, error)
 	DeleteUser(ctx context.Context, id string) error
 	HardDeleteUser(ctx context.Context, id string) error
 }
@@ -26,7 +26,7 @@ func NewUserService(repo repository.UserRepository) UserService {
 	return &userService{repo: repo}
 }
 
-func (s *userService) CreateUser(ctx context.Context, req domain.UserCreateRequest) (*domain.User, error) {
+func (s *userService) CreateUser(ctx context.Context, req *domain.UserCreateRequest) (*domain.User, error) {
 	userUuidV7, err := uuid.NewV7()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user id: %w", err)
@@ -57,7 +57,7 @@ func (s *userService) GetAllUsers(ctx context.Context) ([]*domain.User, error) {
 	return s.repo.GetUsers(ctx)
 }
 
-func (s *userService) UpdateUser(ctx context.Context, req domain.UserUpdateRequest) (*domain.User, error) {
+func (s *userService) UpdateUser(ctx context.Context, req *domain.UserUpdateRequest) (*domain.User, error) {
 	user := &domain.User{
 		Id:    req.Id,
 		Name:  req.Name,

@@ -3,12 +3,12 @@
 import PresentationTable from "./parts/presentation-table";
 import { usePresentations } from "../hooks/use-presentations";
 import PresentationsHeader from "./parts/presentations-header";
+import { Presentation } from "@/types/presentation";
 
-export default function Presentations() {
+export default function Presentations({ presentations }: { presentations: Presentation[] }) {
     const {
         isOpen,
         editData,
-        presentations,
         onOpenChange,
         onEdit,
         onReNotify,

@@ -18,19 +18,20 @@ export default function PresentationTableRow({
     onDelete, 
     onReNotify 
 }: PresentationTableRowProps) {
+    const status = ["未アサイン", "未発表", "完了"][Number(item.status)];
     return (
         <Table.Row key={item.id}>
-            <Table.Cell>{dateFormatter(item.date)}</Table.Cell>
+            <Table.Cell>{dateFormatter(item.presentation_date)}</Table.Cell>
             <Table.Cell>{item.team}</Table.Cell>
-            <Table.Cell>{item.speaker}</Table.Cell>
+            <Table.Cell>{item.assignee}</Table.Cell>
             <Table.Cell>{item.title}</Table.Cell>
             <Table.Cell>{item.content}</Table.Cell>
-            <Table.Cell>{item.status}</Table.Cell>
+            <Table.Cell>{status}</Table.Cell>
             {isAdmin && (
                 <Table.Cell textAlign="end">
                     <Flex gap={2} justifyContent="flex-end">
                         {
-                            item.status === "未アサイン" && (
+                            status === "未アサイン" && (
                                 <Button variant="ghost" size="sm" onClick={() => onReNotify(item.id)}>
                                     <Icon as={LuBell} /> 再通知
                                 </Button>

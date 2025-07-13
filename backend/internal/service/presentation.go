@@ -15,7 +15,7 @@ type PresentationService interface {
 	GetPresentations(ctx context.Context) ([]*domain.Presentation, error)
 	GetPresentationsByTeam(ctx context.Context, teamId string) ([]*domain.Presentation, error)
 	GetPresentationsByUser(ctx context.Context, userId string) ([]*domain.Presentation, error)
-	UpdatePresentation(ctx context.Context, presentationData domain.PresentationUpdateRequest) error
+	UpdatePresentation(ctx context.Context, presentationData domain.PresentationUpdateRequestInterface) error
 	DeletePresentation(ctx context.Context, id string) error
 	HardDeletePresentation(ctx context.Context, id string) error
 }
@@ -33,17 +33,22 @@ func (s *presentationService) CreatePresentation(ctx context.Context, presentati
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user id: %w", err)
 	}
-	presentation := &domain.Presentation{
+	presentationCreateInput := &domain.PresentationRaw{
 		Id:               presentationUuid.String(),
 		PresentationDate: presentationData.PresentationDate,
-		Team:             presentationData.Team,
-		Assignee:         "",
+		TeamId:           presentationData.Team,
+		AssigneeId:       "",
 		Title:            "",
 		Description:      "",
 		Status:           domain.Unassigned,
 	}
 
-	if err = s.repo.CreatePresentation(ctx, presentation); err != nil {
+	if err = s.repo.CreatePresentation(ctx, presentationCreateInput); err != nil {
+		return nil, err
+	}
+
+	presentation, err := s.repo.GetPresentation(ctx, presentationUuid.String())
+	if err != nil {
 		return nil, err
 	}
 
@@ -62,7 +67,7 @@ func (s *presentationService) GetPresentationsByUser(ctx context.Context, userId
 	return s.repo.GetUserPresentations(ctx, userId)
 }
 
-func (s *presentationService) UpdatePresentation(ctx context.Context, presentationData domain.PresentationUpdateRequest) error {
+func (s *presentationService) UpdatePresentation(ctx context.Context, presentationData domain.PresentationUpdateRequestInterface) error {
 	isAllUpdate, newPresentation := presentationData.GetPresentationData()
 
 	if isAllUpdate {
@@ -70,26 +75,26 @@ func (s *presentationService) UpdatePresentation(ctx context.Context, presentati
 			return fmt.Errorf("cannot update presentation status to completed")
 		}
 	} else {
-		originalPresentation, err := s.repo.GetPresentation(ctx, newPresentation.Id)
+		originalPresentation, err := s.repo.GetPresentationRawData(ctx, newPresentation.Id)
 		if err != nil {
 			return err
 		}
 
 		switch newPresentation.Status {
 		case domain.Unassigned:
-			newPresentation.Assignee = ""
+			newPresentation.AssigneeId = ""
 			newPresentation.PresentationDate = originalPresentation.PresentationDate
 			newPresentation.Title = ""
 			newPresentation.Description = ""
 		case domain.Assigned:
 			newPresentation.PresentationDate = originalPresentation.PresentationDate
-			newPresentation.Team = originalPresentation.Team
+			newPresentation.TeamId = originalPresentation.TeamId
 			newPresentation.Title = ""
 			newPresentation.Description = ""
 		case domain.ContentInputted:
 			newPresentation.PresentationDate = originalPresentation.PresentationDate
-			newPresentation.Team = originalPresentation.Team
-			newPresentation.Assignee = originalPresentation.Assignee
+			newPresentation.TeamId = originalPresentation.TeamId
+			newPresentation.AssigneeId = originalPresentation.AssigneeId
 		// In normal operation, the default branch is unreachable.
 		default:
 			return fmt.Errorf("invalid status: %s", newPresentation.Status)

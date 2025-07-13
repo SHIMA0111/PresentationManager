@@ -35,7 +35,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 
 // Fake validation function
 func validateToken(token string) bool {
-	return token == "<PASSWORD>"
+	return token == "1234567890"
 }
 
 // Fake getting user id function

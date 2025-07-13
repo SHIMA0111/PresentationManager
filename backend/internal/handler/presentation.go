@@ -151,7 +151,7 @@ func (h *PresentationHandler) UpdatePresentationContent(c *gin.Context) {
 }
 
 func (h *PresentationHandler) UpdatePresentation(c *gin.Context) {
-	var req domain.PresentationUpdateAllRequest
+	var req domain.PresentationUpdateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(400, gin.H{"error": "invalid request body"})
 		slog.Error("failed to bind json", "error", err)

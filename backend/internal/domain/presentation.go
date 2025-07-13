@@ -24,6 +24,10 @@ func (s StatusEnum) String() string {
 	}
 }
 
+type PresentationUpdateRequestInterface interface {
+	GetPresentationData() (bool, *PresentationRaw)
+}
+
 type Presentation struct {
 	Id               string     `json:"id"`
 	PresentationDate string     `json:"presentation_date"`
@@ -34,23 +38,29 @@ type Presentation struct {
 	Status           StatusEnum `json:"status"`
 }
 
+type PresentationRaw struct {
+	Id               string
+	PresentationDate string
+	TeamId           string
+	AssigneeId       string
+	Title            string
+	Description      string
+	Status           StatusEnum
+}
+
 type PresentationCreateRequest struct {
 	PresentationDate string `json:"presentation_date" binding:"required"`
 	Team             string `json:"team" binding:"required"`
 }
 
-type PresentationUpdateRequest interface {
-	GetPresentationData() (bool, *Presentation)
-}
-
 type PresentationUpdateTeamRequest struct {
-	Id   string `json:"id" binding:"required,uuid"`
-	Team string `json:"team" binding:"required,uuid"`
+	Id     string `json:"id" binding:"required,uuid"`
+	TeamId string `json:"team_id" binding:"required,uuid"`
 }
 
 type PresentationUpdateAssigneeRequest struct {
-	Id       string `json:"id" binding:"required,uuid"`
-	Assignee string `json:"assignee" binding:"required,uuid"`
+	Id         string `json:"id" binding:"required,uuid"`
+	AssigneeId string `json:"assignee_id" binding:"required,uuid"`
 }
 
 type PresentationUpdateContentsRequest struct {
@@ -59,34 +69,34 @@ type PresentationUpdateContentsRequest struct {
 	Description string `json:"description" binding:"omitempty"`
 }
 
-type PresentationUpdateAllRequest struct {
+type PresentationUpdateRequest struct {
 	Id               string     `json:"id" binding:"required,uuid"`
 	PresentationDate string     `json:"presentation_date" binding:"required"`
-	Team             string     `json:"team" binding:"required,uuid"`
-	Assignee         string     `json:"assignee" binding:"required,uuid"`
+	TeamId           string     `json:"team_id" binding:"required,uuid"`
+	AssigneeId       string     `json:"assignee_id" binding:"required,uuid"`
 	Title            string     `json:"title" binding:"required"`
 	Description      string     `json:"description" binding:"omitempty"`
 	Status           StatusEnum `json:"status" binding:"required"`
 }
 
-func (r *PresentationUpdateTeamRequest) GetPresentationData() (bool, *Presentation) {
-	return false, &Presentation{
+func (r *PresentationUpdateTeamRequest) GetPresentationData() (bool, *PresentationRaw) {
+	return false, &PresentationRaw{
 		Id:     r.Id,
-		Team:   r.Team,
+		TeamId: r.TeamId,
 		Status: Unassigned,
 	}
 }
 
-func (r *PresentationUpdateAssigneeRequest) GetPresentationData() (bool, *Presentation) {
-	return false, &Presentation{
-		Id:       r.Id,
-		Assignee: r.Assignee,
-		Status:   Assigned,
+func (r *PresentationUpdateAssigneeRequest) GetPresentationData() (bool, *PresentationRaw) {
+	return false, &PresentationRaw{
+		Id:         r.Id,
+		AssigneeId: r.AssigneeId,
+		Status:     Assigned,
 	}
 }
 
-func (r *PresentationUpdateContentsRequest) GetPresentationData() (bool, *Presentation) {
-	return false, &Presentation{
+func (r *PresentationUpdateContentsRequest) GetPresentationData() (bool, *PresentationRaw) {
+	return false, &PresentationRaw{
 		Id:          r.Id,
 		Title:       r.Title,
 		Description: r.Description,
@@ -94,12 +104,12 @@ func (r *PresentationUpdateContentsRequest) GetPresentationData() (bool, *Presen
 	}
 }
 
-func (r *PresentationUpdateAllRequest) GetPresentationData() (bool, *Presentation) {
-	return true, &Presentation{
+func (r *PresentationUpdateRequest) GetPresentationData() (bool, *PresentationRaw) {
+	return true, &PresentationRaw{
 		Id:               r.Id,
 		PresentationDate: r.PresentationDate,
-		Team:             r.Team,
-		Assignee:         r.Assignee,
+		TeamId:           r.TeamId,
+		AssigneeId:       r.AssigneeId,
 		Title:            r.Title,
 		Description:      r.Description,
 		Status:           r.Status,

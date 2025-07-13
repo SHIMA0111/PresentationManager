@@ -1,8 +1,8 @@
 type Presentation = {
     id: string;
-    date: string;
+    presentation_date: string;
     team: string;
-    speaker: string;
+    assignee: string;
     title: string;
     content: string;
     status: "未アサイン" | "未発表" | "完了";

@@ -22,7 +22,7 @@ export class BrowserManager {
                 viewport: { width: this.width, height: this.height },
                 executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
                 args: [
-                    // For Google Meet, this is necessary to join the meeting.
+                    // For Google Meet, this is necessary to join the meeting avoiding the bot detection.
                     '--disable-blink-features=AutomationControlled',
                     // Automations for screen and audio capture
                     '--auto-select-desktop-capture-source=Entire screen',

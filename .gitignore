@@ -74,3 +74,16 @@ backend/go.work.sum
 # typescript
 **/*.tsbuildinfo
 **/next-env.d.ts
+
+# recording dirs
+meeting_bot/recordings
+meeting_bot/*.webm
+meeting_bot/*.mp3
+meeting_bot/*.wav
+meeting_bot/*.m4a
+meeting_bot/*.mp4
+meeting_bot/*.mov
+meeting_bot/*.avi
+meeting_bot/*.mkv
+meeting_bot/*.flv
+meeting_bot/*.wmv

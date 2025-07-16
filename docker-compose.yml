@@ -1,6 +1,23 @@
 services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.1
+    container_name: presentation-manager-keycloak
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_HTTP_ENABLED: true
+    ports:
+      - "${KEYCLOAK_PORT:-8090}:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./docker/keycloak/themes:/opt/keycloak/themes
+    command: start-dev
+    networks:
+      - presentation-manager-network
+
   mysql:
-    image: mysql:8.0
+    image: mysql:8.4
     container_name: presentation-manager-mysql
     restart: unless-stopped
     environment:
@@ -55,6 +72,7 @@ services:
 
 volumes:
   mysql_data:
+  keycloak_data:
 
 networks:
   presentation-manager-network:

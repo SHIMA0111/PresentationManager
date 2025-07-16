@@ -6,7 +6,7 @@ interface UserState {
     setUser: (user: User) => void;
 }
 
-const useUserStore = create<UserState>((set) => ({
+export const useUserStore = create<UserState>((set) => ({
     user: null,
-    setUser: (user: User) => set({ user })
-}))
+    setUser: (user) => set({ user }),
+}));

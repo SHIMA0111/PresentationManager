@@ -14,14 +14,14 @@ import (
 // It verifies provided credentials, assigns defaults as needed, and retries connection checks before finalizing.
 // Returns the database instance or an error if the setup or connection process fails.
 func SetupDatabase() (*sql.DB, error) {
-	username := os.Getenv("MYSQL_USER")
-	password := os.Getenv("MYSQL_PASSWORD")
+	username := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
 
 	if username == "" || password == "" {
 		return nil, fmt.Errorf("MYSQL_USER or MYSQL_PASSWORD or the both are empty. please check your environment variables")
 	}
 
-	port := os.Getenv("MYSQL_PORT")
+	port := os.Getenv("DB_PORT")
 	// If the port is not set, use the default port of the MySQL
 	if port == "" {
 		port = "3306"
@@ -32,7 +32,7 @@ func SetupDatabase() (*sql.DB, error) {
 		host = "localhost"
 	}
 
-	dbname := os.Getenv("MYSQL_DBNAME")
+	dbname := os.Getenv("DB_NAME")
 	if dbname == "" {
 		dbname = "presentation_manager"
 	}

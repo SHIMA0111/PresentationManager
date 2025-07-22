@@ -35,7 +35,8 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: ./docker/backend/Dockerfile
+      dockerfile: ../docker/backend/Dockerfile
+    image: presentation-manager-backend
     container_name: presentation-manager-backend
     restart: unless-stopped
     environment:
@@ -44,7 +45,8 @@ services:
       DB_NAME: ${MYSQL_DATABASE:-presentation_manager}
       DB_USER: ${MYSQL_USER:-dbuser}
       DB_PASSWORD: ${MYSQL_PASSWORD:-passw0rd}
-      DB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-my0password}
+      OIDC_REALM_URL: ${OIDC_REALM_URL:-http://keycloak:8080/realms/presentation-manager}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-nextjs-front}
       GIN_MODE: release
     ports:
       - "8080:8080"
@@ -56,7 +58,8 @@ services:
   ui:
     build:
       context: ./ui
-      dockerfile: ./docker/ui/Dockerfile
+      dockerfile: ../docker/ui/Dockerfile
+    image: presentation-manager-ui
     container_name: presentation-manager-ui
     restart: unless-stopped
     environment:

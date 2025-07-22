@@ -17,7 +17,7 @@ RUN go mod download
 COPY . .
 
 # バイナリをビルド
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/app
 
 # 実行用の軽量イメージ
 FROM alpine:latest

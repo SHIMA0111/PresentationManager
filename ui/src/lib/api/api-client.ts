@@ -1,3 +1,5 @@
+import { auth } from "@/auth";
+
 export enum Method {
     GET = "GET",
     POST = "POST",
@@ -11,8 +13,17 @@ export async function apiClient(
     data?: any,
     headers?: Record<string, string>,
 ) {
+    const session = await auth();
+
+    if (session?.error === "TokenDeactivated") {
+        throw new Error("TokenDeactivated");
+    }
+    else if (session?.error) {
+        throw new Error(session.error);
+    }
+
     const url = `${process.env.API_HOST}${endpoint}`;
-    const token = "1234567890";
+    const token = session?.accessToken;
     try {
         const response = await fetch(url, {
             method,

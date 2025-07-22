@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/SHIMA0111/PresentationManager/backend/internal/middleware/auth"
 	"log"
 
@@ -59,9 +60,15 @@ func main() {
 	r := gin.Default()
 
 	// Middlewares
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	oidc, err := infra.SetupOIDC(ctx)
+	if err != nil {
+		log.Fatalf("failed to setup oidc: %v", err)
+	}
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	r.Use(auth.JWTAuthMiddleware())
+	r.Use(auth.JWTAuthMiddleware(oidc))
 
 	apiRoot := r.Group("/api/v1")
 

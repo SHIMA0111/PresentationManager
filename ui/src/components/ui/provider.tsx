@@ -6,11 +6,14 @@ import {
   type ColorModeProviderProps,
 } from "./color-mode"
 import { system } from "@/config/theme"
+import { SessionProvider } from "next-auth/react"
 
 export function Provider(props: ColorModeProviderProps) {
   return (
     <ChakraProvider value={system}>
-      <ColorModeProvider {...props} />
+      <SessionProvider>
+        <ColorModeProvider {...props} />
+      </SessionProvider>
     </ChakraProvider>
   )
 }

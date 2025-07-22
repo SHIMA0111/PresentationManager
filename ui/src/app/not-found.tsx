@@ -2,8 +2,8 @@
 
 import { useColorModeValue } from "@/components/ui/color-mode";
 import Divider from "@/components/ui/divider";
-import { Box, Button, Card, Flex, Heading, Icon, Link, Text, VStack } from "@chakra-ui/react";
-import { LuArrowLeft, LuFileX, LuHourglass } from "react-icons/lu";
+import { Box, Button, Card, Flex, Heading, Icon, Link, Text } from "@chakra-ui/react";
+import { LuArrowLeft, LuFileX } from "react-icons/lu";
 import { usePathname } from "next/navigation";
 
 export default function NotFound() {

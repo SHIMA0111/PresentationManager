@@ -1,11 +1,14 @@
 package auth
 
 import (
+	"fmt"
+	"github.com/SHIMA0111/PresentationManager/backend/internal/infra"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"strings"
 )
 
-func JWTAuthMiddleware() gin.HandlerFunc {
+func JWTAuthMiddleware(oidc *infra.OIDC) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Extract Authorization header token
 		authHeader := c.GetHeader("Authorization")
@@ -21,12 +24,24 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		if !validateToken(tokenString) {
+		token, err := jwt.Parse(tokenString, oidc.KeyCache.KeyFunc,
+			jwt.WithIssuer(oidc.RealmURL),
+		)
+
+		if err == nil {
+			claims := token.Claims.(jwt.MapClaims)
+			if claims["aud"] != oidc.ClientID && claims["azp"] != oidc.ClientID {
+				err = fmt.Errorf("invalid audience or authorized party")
+			}
+		}
+
+		if err != nil {
+			fmt.Println(err)
 			c.AbortWithStatusJSON(401, gin.H{"error": "invalid token"})
 			return
 		}
 
-		userId := getUserIDFromToken(tokenString)
+		userId := token.Claims.(jwt.MapClaims)["sub"].(string)
 		c.Set("userId", userId)
 
 		c.Next()

@@ -6,6 +6,7 @@ import Divider from "@/components/ui/divider";
 import { useLoginForm } from "../../hooks/use-login-form";
 import LoginHeader from "../parts/login-header";
 import LoginFormFields from "../parts/login-form-fields";
+import { KeycloakLoginButton } from "./parts/keycloak-login-button";
 
 export default function LoginForm() {
     const {
@@ -60,6 +61,7 @@ export default function LoginForm() {
                             >
                                 Login
                             </Button>
+                            <KeycloakLoginButton />
                             <Divider text="Or" />
                             <GoogleLoginButton />
                         </VStack>

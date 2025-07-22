@@ -4,14 +4,12 @@ services:
     container_name: presentation-manager-keycloak
     restart: unless-stopped
     environment:
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
-      KC_HTTP_ENABLED: true
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
     ports:
-      - "${KEYCLOAK_PORT:-8090}:8080"
+      - "127.0.0.1:${KEYCLOAK_PORT:-8090}:8080"
     volumes:
       - keycloak_data:/opt/keycloak/data
-      - ./docker/keycloak/themes:/opt/keycloak/themes
     command: start-dev
     networks:
       - presentation-manager-network
@@ -21,10 +19,10 @@ services:
     container_name: presentation-manager-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-my0password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-presentation_manager}
+      MYSQL_USER: ${MYSQL_USER:-dbuser}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-passw0rd}
     ports:
       - "3306:3306"
     volumes:
@@ -43,10 +41,10 @@ services:
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
-      DB_NAME: ${MYSQL_DATABASE}
-      DB_USER: ${MYSQL_USER}
-      DB_PASSWORD: ${MYSQL_PASSWORD}
-      DB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_NAME: ${MYSQL_DATABASE:-presentation_manager}
+      DB_USER: ${MYSQL_USER:-dbuser}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-passw0rd}
+      DB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-my0password}
       GIN_MODE: release
     ports:
       - "8080:8080"
@@ -76,4 +74,4 @@ volumes:
 
 networks:
   presentation-manager-network:
-    driver: bridge 
+    driver: bridge

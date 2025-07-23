@@ -1,13 +1,14 @@
 import { Flex, Heading } from "@chakra-ui/react";
 import EditDialog from "./edit-dialog";
+import { Presentation } from "@/types/presentation";
 
 interface PresentationsHeaderProps {
     isAdmin: boolean;
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
-    editData: any;
-    onCreate: (newData: any) => void;
-    onUpdate: (updatedData: any) => void;
+    editData: Presentation | undefined;
+    onCreate: (newData: Presentation) => void;
+    onUpdate: (updatedData: Presentation) => void;
 }
 
 export default function PresentationsHeader({

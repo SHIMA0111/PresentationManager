@@ -1,7 +1,6 @@
 import { Account, NextAuthConfig, Session, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import Keycloak from "next-auth/providers/keycloak";
-import { signOut } from "./auth";
 
 async function refreshToken(token: JWT) {
     try {

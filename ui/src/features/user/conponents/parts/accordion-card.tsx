@@ -1,6 +1,5 @@
 import { Button, Card, Editable, Flex, Icon, IconButton, Textarea, useEditable } from "@chakra-ui/react";
 import { Presentation } from "@/types/presentation";
-import { useEffect, useState } from "react";
 import { LuCheck, LuSave, LuSquarePen, LuX } from "react-icons/lu";
 import { usePresentationEdit } from "../../hooks/use-presentation-edit";
 

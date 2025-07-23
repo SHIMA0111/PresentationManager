@@ -1,4 +1,4 @@
-import { Button, Card, Text, Link } from "@chakra-ui/react";
+import { Button, Card, Link } from "@chakra-ui/react";
 
 interface CardWithButtonProps {
     title: string;

@@ -2,10 +2,12 @@ package auth
 
 import (
 	"fmt"
+	"log/slog"
+	"strings"
+
 	"github.com/SHIMA0111/PresentationManager/backend/internal/infra"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"strings"
 )
 
 func JWTAuthMiddleware(oidc *infra.OIDC) gin.HandlerFunc {
@@ -36,7 +38,7 @@ func JWTAuthMiddleware(oidc *infra.OIDC) gin.HandlerFunc {
 		}
 
 		if err != nil {
-			fmt.Println(err)
+			slog.Error("invalid token", "error", err)
 			c.AbortWithStatusJSON(401, gin.H{"error": "invalid token"})
 			return
 		}
@@ -46,15 +48,4 @@ func JWTAuthMiddleware(oidc *infra.OIDC) gin.HandlerFunc {
 
 		c.Next()
 	}
-}
-
-// Fake validation function
-func validateToken(token string) bool {
-	return token == "1234567890"
-}
-
-// Fake getting user id function
-func getUserIDFromToken(token string) string {
-	token = strings.TrimPrefix(token, "Bearer ")
-	return token
 }

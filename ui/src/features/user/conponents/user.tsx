@@ -9,36 +9,36 @@ import { useMemo } from "react";
 const data: Presentation[] = [
     {
         id: crypto.randomUUID(),
-        date: "2025-06-29 11:00",
+        presentation_date: "2025-06-29 11:00",
         team: "チームA",
-        speaker: "発表者A",
+        assignee: "発表者A",
         title: "発表タイトルA",
         content: "発表内容A",
         status: "完了",
     },
     {
         id: crypto.randomUUID(),
-        date: "2025-06-29 11:00",
+        presentation_date: "2025-06-29 11:00",
         team: "チームB",
-        speaker: "発表者B",
-        title: "",
+        assignee: "発表者B",
+        title: "発表タイトルB",
         content: "発表内容B",
         status: "未発表",
     },
     {
         id: crypto.randomUUID(),
-        date: "2025-07-01 12:00",
+        presentation_date: "2025-07-01 12:00",
         team: "チームC",
-        speaker: "発表者C",
+        assignee: "発表者C",
         title: "発表タイトルC",
         content: "発表内容C",
         status: "完了",
     },
     {
         id: crypto.randomUUID(),
-        date: "2025-07-06 12:00",
+        presentation_date: "2025-07-06 12:00",
         team: "チームC",
-        speaker: "発表者C",
+        assignee: "発表者C",
         title: "発表タイトルC",
         content: "発表内容C",
         status: "未発表",
@@ -49,7 +49,7 @@ export default function User() {
     const defaultOpen = useMemo(() => {
         const untitled = data.filter((item) => item.title === "");
         return untitled.map((item) => item.id);
-    }, data);
+    }, [data]);
 
     return (
         <>

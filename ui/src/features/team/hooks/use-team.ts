@@ -9,7 +9,7 @@ const initialData: Presentation[] = [
         presentation_date: "2025-06-22 10:00",
         team: "チームA",
         assignee: "発表者A",
-        title: "",
+        title: "発表タイトルA",
         content: "発表内容A",
         status: "完了",
     },
@@ -70,6 +70,7 @@ export function useTeam() {
         teamMembers,
         unassignPresentations,
         isTeamAdmin,
+        setIsTeamAdmin,
         handleIncrementUnassign,
     };
 } 

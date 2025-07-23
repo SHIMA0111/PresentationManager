@@ -1,41 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Presentation } from "@/types/presentation";
 import { toaster } from "@/components/ui/toaster";
-
-const initialData: Presentation[] = [
-    {
-        id: crypto.randomUUID(),
-        date: "2025-06-22 10:00",
-        team: "チームA",
-        speaker: "発表者A",
-        title: "発表タイトルA",
-        content: "発表内容A",
-        status: "完了",
-    },
-    {
-        id: crypto.randomUUID(),
-        date: "2025-06-29 11:00",
-        team: "チームB",
-        speaker: "発表者B",
-        title: "発表タイトルB",
-        content: "発表内容B",
-        status: "未発表",
-    },
-    {
-        id: crypto.randomUUID(),
-        date: "2025-07-06 12:00",
-        team: "チームC",
-        speaker: "発表者C",
-        title: "発表タイトルC",
-        content: "発表内容C",
-        status: "未アサイン",
-    }
-];
 
 export function usePresentations() {
     const [isOpen, setIsOpen] = useState(false);
     const [editData, setEditData] = useState<Presentation | undefined>(undefined);
-    const [presentations, setPresentations] = useState<Presentation[]>(initialData);
+    const [presentations, setPresentations] = useState<Presentation[]>([]);
+
+    useEffect(() => {
+        const fetchPresentations = async () => {
+            const response = await fetch("/api/v1/presentations");
+            const data = await response.json();
+            setPresentations(data);
+        }
+        fetchPresentations();
+    }, []);
 
     const onOpenChange = (open: boolean) => {
         setIsOpen(open);

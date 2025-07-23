@@ -20,7 +20,7 @@ export const usePresentationEdit = (presentation: Presentation) => {
         } else {
             setIsEdit(true);
         }
-    }, [title, content]);
+    }, [title, content, presentation]);
 
     return {
         title,

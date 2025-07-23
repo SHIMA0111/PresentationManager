@@ -10,7 +10,7 @@ export enum Method {
 export async function apiClient(
     endpoint: string,
     method: Method,
-    data?: any,
+    data?: unknown,
     headers?: Record<string, string>,
 ) {
     const session = await auth();
@@ -24,6 +24,7 @@ export async function apiClient(
 
     const url = `${process.env.API_HOST}${endpoint}`;
     const token = session?.accessToken;
+
     try {
         const response = await fetch(url, {
             method,
@@ -34,14 +35,14 @@ export async function apiClient(
                 ...headers,
             },
         });
-    
+
         if (!response.ok) {
             throw new Error(`API Error: ${response.status} ${response.statusText}`);
         }
     
         return response.json();
-    } catch (error: any) {
-        console.error(error.code);
+    } catch (error: unknown) {
+        console.error(error);
         throw error;
     }
 }

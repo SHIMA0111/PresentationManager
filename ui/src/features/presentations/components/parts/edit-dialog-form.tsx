@@ -13,6 +13,7 @@ export default function EditDialogForm({
     onPresentationDateChange,
     onTeamChange,
 }: EditDialogFormProps) {
+    console.log(presentationDate);
     return (
         <>
             <Field.Root>

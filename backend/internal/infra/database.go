@@ -18,7 +18,7 @@ func SetupDatabase() (*sql.DB, error) {
 	password := os.Getenv("DB_PASSWORD")
 
 	if username == "" || password == "" {
-		return nil, fmt.Errorf("MYSQL_USER or MYSQL_PASSWORD or the both are empty. please check your environment variables")
+		return nil, fmt.Errorf("DB_USER or DB_PASSWORD or the both are empty. please check your environment variables")
 	}
 
 	port := os.Getenv("DB_PORT")

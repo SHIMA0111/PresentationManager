@@ -6,6 +6,9 @@ import { useEffect } from "react";
 
 export default function Login() {
     const { data: session, status } = useSession();
+
+    console.log(session);
+    console.log(status);
     
     useEffect(() => {
         if (status === "loading") return;

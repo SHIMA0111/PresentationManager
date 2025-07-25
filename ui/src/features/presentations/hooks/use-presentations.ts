@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Presentation } from "@/types/presentation";
 import { toaster } from "@/components/ui/toaster";
+import { signOut } from "next-auth/react";
 
 export function usePresentations() {
     const [isOpen, setIsOpen] = useState(false);
@@ -10,9 +11,23 @@ export function usePresentations() {
     useEffect(() => {
         const fetchPresentations = async () => {
             const response = await fetch("/api/v1/presentations");
+
+            if (!response.ok) {
+                if (response.status === 401 && (await response.json()).error === "TokenDeactivated") {
+                    await signOut({
+                        redirect: true,
+                        redirectTo: "/auth/login",
+                    });
+                    return;
+                }
+
+                throw new Error("Failed to fetch presentations");
+            }
+
             const data = await response.json();
             setPresentations(data);
         }
+        
         fetchPresentations();
     }, []);
 

@@ -19,7 +19,15 @@ export default function EditDialog({ isOpen, onOpenChange, editData, onCreate, o
     // editDataが変更されたときにstateを更新
     useEffect(() => {
         if (editData) {
-            setPresentationDate(editData.date || "");
+            const date = (new Date(editData.presentation_date));
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const hour = date.getHours();
+            const minute = date.getMinutes();
+            
+            const formattedDate = `${year}-${month < 10 ? "0" + month : month}-${day < 10 ? "0" + day : day}T${hour < 10 ? "0" + hour : hour}:${minute < 10 ? "0" + minute : minute}`;
+            setPresentationDate(formattedDate);
             setTeam(editData.team || "");
         } else {
             // 新規作成の場合は空にリセット
@@ -33,14 +41,14 @@ export default function EditDialog({ isOpen, onOpenChange, editData, onCreate, o
     const handleSubmit = () => {
         // If team is changed, speaker, title, content should be reset.
         if (isEditMode && editData.team !== team) {
-            onUpdate({ ...editData, date: presentationDate, team: team, speaker: "", title: "", content: "", status: "未アサイン" });
+            onUpdate({ ...editData, presentation_date: presentationDate, team: team, assignee: "", title: "", content: "", status: "未アサイン" });
         } 
         // If team is not changed, only date should be updated.
         else if (isEditMode) {
-            onUpdate({ ...editData, date: presentationDate});
+            onUpdate({ ...editData, presentation_date: presentationDate});
         }
         else {
-            onCreate({ id: crypto.randomUUID(), date: presentationDate, team: team, speaker: "", title: "", content: "", status: "未アサイン" });
+            onCreate({ id: crypto.randomUUID(), presentation_date: presentationDate, team: team, assignee: "", title: "", content: "", status: "未アサイン" });
         }
     };
     

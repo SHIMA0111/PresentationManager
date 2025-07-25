@@ -44,8 +44,8 @@ export default function TeamTable({ data, team, isTeamAdmin, onIncrementUnassign
                     <Table.Body>
                         {filteredData.map((item) => (
                             <Table.Row key={item.id}>
-                                <Table.Cell>{dateFormatter(item.date)}</Table.Cell>
-                                <Table.Cell>{item.speaker}</Table.Cell>
+                                <Table.Cell>{dateFormatter(item.presentation_date)}</Table.Cell>
+                                <Table.Cell>{item.assignee}</Table.Cell>
                                 <Table.Cell>{item.title}</Table.Cell>
                                 <Table.Cell>{item.content}</Table.Cell>
                                 <Table.Cell>{item.status}</Table.Cell>

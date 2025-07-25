@@ -32,7 +32,7 @@ export default function ItemAccordions({ data, defaultOpen }: ItemAccordionsProp
                             }
                             <Flex align="center" spaceX={2}>
                                 <Icon as={LuCalendar} />
-                                <Text>{item.date}</Text>
+                                <Text>{item.presentation_date}</Text>
                             </Flex>
                             <Flex align="center" spaceX={2}>
                                 <Text>{item.title}</Text>
